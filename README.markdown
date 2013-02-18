@@ -52,3 +52,9 @@ For example, my BTN1 was not working. I found that it is not connected
 to the ground. A simple extra wire did the trick:
 
 <a href="http://www.flickr.com/photos/syrnick/7536561256/" title="Bugfix by syrnick, on Flickr"><img src="http://farm9.staticflickr.com/8022/7536561256_e21dc0c9fc.jpg" width="500" height="333" alt="Bugfix"></a>
+
+## Chess clock
+
+### Touch buttons
+
+Plug in 4 jumper wires into pins 8,9,10,11. Run the chess_clock/touchbuttons sketch. You'd see arrays of 4 elements showing
