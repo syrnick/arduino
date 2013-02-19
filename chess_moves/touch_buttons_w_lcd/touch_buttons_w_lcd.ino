@@ -113,8 +113,8 @@ int r = 0;
 void check_buttons(){
   for(int i=0;i<num_buttons;i++){
     uint8_t pin_value = readCapacitivePin(button_pins[i]); 
-    if( pin_value>1 ){
-      button_hits[i] = 1;
+    if( pin_value>button_hits[i] ){
+      button_hits[i] = pin_value;
     }
   }
 }
@@ -125,6 +125,7 @@ void reset_buttons(){
 }
 
 void lcd_print_buttons(){
+  lcd.clear();
   lcd.setCursor(0, 0);
 
   lcd.print("[");
@@ -133,7 +134,7 @@ void lcd_print_buttons(){
     if(i<num_buttons-1){
       lcd.print(",");
     }else{
-      lcd.println("]");
+      lcd.print("]");
     }
   }
 }

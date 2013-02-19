@@ -121,12 +121,22 @@ int victor = 0;
 
 void show_clock();
 
+void beast_mode(){
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("BEAST MODE CLOCK");
+  lcd.setCursor(0, 1);
+  lcd.print("(c) CrowdFlower");
+  delay(3000);
+}
+
 void reset_game(){
   reset_clock();
   victor = 0;
   board1move = WHITE_MOVE;
   board2move = WHITE_MOVE;
   lcd.clear();
+  beast_mode();
 }
 
 void reset_clock(){
@@ -249,8 +259,8 @@ int r = 0;
 void check_buttons(){
   for(int i=0;i<num_buttons;i++){
     uint8_t pin_value = readCapacitivePin(button_pins[i]); 
-    if( pin_value>1 ){
-      button_hits[i] = 1;
+    if( pin_value > button_hits[i] ){
+      button_hits[i] = pin_value;
     }
   }
 }
@@ -276,10 +286,24 @@ boolean game_over(){
   return victor > 0;
 }
 
+const int button_threshold = 3;
+
+boolean all_buttons_pressed(){
+  for(int i=0;i<num_buttons;i++){
+    if(button_hits[i] <= button_threshold) return false;
+  }
+  return true;
+}
 
 void check_button_actions(){
-  serial_print_buttons();
-  if(button_hits[0]){
+  //serial_print_buttons();
+  if( all_buttons_pressed() ){
+    beast_mode();
+    delay(7000);
+    return;
+  }
+  
+  if(button_hits[0] > button_threshold){
     //pause/unpause
     pause = !pause;
     if(pause){
@@ -288,7 +312,7 @@ void check_button_actions(){
       resume_clock();
     }
   }
-  if(button_hits[1]){
+  if(button_hits[1] > button_threshold){
     //reset
     if(pause){
       reset_game();
@@ -297,20 +321,20 @@ void check_button_actions(){
   if( game_over() ) return;
   
   if( board1move == WHITE_MOVE ){
-    if(button_hits[2]){
+    if(button_hits[2] > button_threshold){
       board1move = BLACK_MOVE;
     }
   }else{
-    if(button_hits[3]){
+    if(button_hits[3] > button_threshold){
       board1move = WHITE_MOVE;
     }
   }
   if( board2move == WHITE_MOVE ){
-    if(button_hits[4]){
+    if(button_hits[4] > button_threshold){
       board2move = BLACK_MOVE;
     }
   }else{
-    if(button_hits[5]){
+    if(button_hits[5] > button_threshold){
       board2move = WHITE_MOVE;
     }
   }
@@ -322,7 +346,6 @@ void setup() {
   // set up the LCD's number of columns and rows: 
   lcd.begin(16, 2);
   // Print a message to the LCD.
-  //lcd.print("hello, world!");
 
   reset_game();
 }
