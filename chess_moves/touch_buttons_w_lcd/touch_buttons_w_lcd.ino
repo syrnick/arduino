@@ -1,3 +1,7 @@
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(12, 8, 9, 10, 11, 13);
+
+
 // http://playground.arduino.cc/Code/CapacitiveSensor
 
 // readCapacitivePin
@@ -101,14 +105,12 @@ uint8_t readCapacitivePin(int pinToMeasure) {
 
 
 int rate = 1;
+int button_pins[] = {7,2,3,4,5,6};
+int button_hits[] = {0,0,0,0,0,0};
+int num_buttons = 6;
 int r = 0;
 
-
-int button_pins[] = {8,9,10,11};
-int button_hits[] = {0,0,0,0};
-int num_buttons = 4;
-
-void checkButtons(){
+void check_buttons(){
   for(int i=0;i<num_buttons;i++){
     uint8_t pin_value = readCapacitivePin(button_pins[i]); 
     if( pin_value>1 ){
@@ -116,25 +118,22 @@ void checkButtons(){
     }
   }
 }
-void resetButtons(){
+void reset_buttons(){
   for(int i=0;i<num_buttons;i++){
     button_hits[i] = 0;
   }
 }
 
-void serialPrintButtons(){
-  //Serial.print("button/pin/value:");
-  Serial.print("[");
+void lcd_print_buttons(){
+  lcd.setCursor(0, 0);
+
+  lcd.print("[");
   for(int i=0;i<num_buttons;i++){
-    //    Serial.print(i, DEC);
-    //    Serial.print("/");
-    //    Serial.print(button_pins[i], DEC);
-    //    Serial.print("/");
-    Serial.print(button_hits[i], DEC);
+    lcd.print(button_hits[i], DEC);
     if(i<num_buttons-1){
-      Serial.print(",");
+      lcd.print(",");
     }else{
-      Serial.println("]");
+      lcd.println("]");
     }
   }
 }
@@ -144,13 +143,15 @@ void serialPrintButtons(){
 
 void setup(){
   Serial.begin(9600);
+  lcd.begin(16, 2);
+
 }
 
 void loop(){
-  checkButtons();
+  check_buttons();
   if( r % 100 == 0 ){
-    serialPrintButtons();
-    resetButtons();
+    lcd_print_buttons();
+    reset_buttons();
     r = 0;
   }
   r += 1;
